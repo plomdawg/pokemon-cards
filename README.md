@@ -6,7 +6,7 @@ Scripts to scrape pokemon card price data to be used in a spreadsheet.
 
 1. [Authenticate with Google Sheets](https://docs.gspread.org/en/latest/oauth2.html) to get your `key.json`. Place this in the main folder.
 
-1. Create a [spreadsheet](https://sheets.google.com) and invite the email from `key.json` with edit access. 
+1. 1. Create a copy of [this spreadsheet](https://docs.google.com/spreadsheets/d/1qyP4u944LPuUsc1ZgTTibGZCifSkw76Vf6p7X0m9Hdg/edit?usp=sharing) and invite the email from `key.json` with edit access. 
 
 1. Replace the spreadsheet ID in [scrape.py](scrape.py) with the spreadsheet ID from the URL (the string after `/d/`).
 
@@ -51,7 +51,6 @@ All Singles,Piloswine,032/189,Uncommon Reverse Holo,$0.39,Near-Mint Reverse Foil
 
 ## Spreadsheet Setup
 
-1. Create a copy of [this spreadsheet](https://docs.google.com/spreadsheets/d/1qyP4u944LPuUsc1ZgTTibGZCifSkw76Vf6p7X0m9Hdg/edit?usp=sharing).
 1. Fill in your cards in the first sheet. They will light up green if found in the list of cards.
 ![image](https://user-images.githubusercontent.com/6510862/174883533-a09136ba-6702-4860-9ea0-9720391dd3ba.png)
 1. The `sorted cards` sheet will now populate.
