@@ -53,6 +53,7 @@ class Category:
             text = div.find('a', class_='card-text').text
             endpoint = div.find('a').get('href')
             tokens = text.split('-')
+
             # Ignore cards that don't match the format:
             #     name - number - kind
             try:
@@ -62,17 +63,11 @@ class Category:
                 kind = clean_text(tokens[2])
             except IndexError:
                 continue
+
             # We might not find a price or condition.
             price = None
             condition = None
-
-            # Check if the card is in stock.
-            in_stock = True
-            out_of_stock_text = div.find(
-                class_='font-weight-bold font-smaller text-muted')
-            if out_of_stock_text is not None:
-                if out_of_stock_text.text in "Out of Stock":
-                    in_stock = False
+            in_stock = False
 
             # Find the listing by Troll and Toad.
             for listing in div.find_all('div', class_='row position-relative align-center py-2 m-auto'):
@@ -81,10 +76,20 @@ class Category:
                     continue
                 else:
                     # Found the listing.
+                    in_stock = True
                     price = listing.find(
                         'div', class_='col-2 text-center p-1').text
                     condition = listing.find('a').text.strip()
                     break
+
+            # Check if the listing says "OUT OF STOCK".
+            out_of_stock_text = div.find(
+                class_='font-weight-bold font-smaller text-muted')
+            if out_of_stock_text is not None:
+                if out_of_stock_text.text in "Out of Stock":
+                    in_stock = False
+
+            # Create the Card object.
             card = Card(name=name, price=price, endpoint=endpoint, number=number,
                         condition=condition, kind=kind, category=self, in_stock=in_stock)
             cards.append(card)
