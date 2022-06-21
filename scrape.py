@@ -158,7 +158,7 @@ with open(output_file, "w") as f:
     try:
         for index, category in enumerate(categories):
             # Ignore blacklisted categories.
-            if index in blacklist:
+            if (index + 1) in blacklist:
                 continue
 
             # Get all the cards from this category.
