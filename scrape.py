@@ -79,7 +79,8 @@ class Category:
     def get_cards(self) -> list:
         cards = []
         page_num = 1
-        endpoint = f"{self.endpoint}?sort-order=A-Z&page-no={page_num}&view=list"
+        # Load 240 items per page.
+        endpoint = f"{self.endpoint}?sort-order=A-Z&page-no={page_num}&view=list&items-pp=240"
         page = get_page(endpoint)
         cards.extend(self.get_cards_from_page(page))
 
