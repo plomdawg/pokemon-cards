@@ -17,7 +17,7 @@ def clean_text(text) -> str:
 
 
 class Card:
-    def __init__(self, name, number, price, condition, kind, endpoint, category) -> None:
+    def __init__(self, name, number, price, condition, kind, endpoint, category, in_stock) -> None:
         self.name = name
         self.number = number
         self.price = price
@@ -25,6 +25,7 @@ class Card:
         self.kind = kind
         self.endpoint = endpoint
         self.category = category
+        self.in_stock = in_stock
 
     @property
     def url(self) -> str:
@@ -32,7 +33,7 @@ class Card:
 
     @property
     def csv(self) -> str:
-        return f"{self.category.name},{self.name},{self.number},{self.kind},{self.price},{self.condition},{self.url},{self.category.url}"
+        return f"{self.category.name},{self.name},{self.number},{self.kind},{self.price},{self.condition},{self.url},{self.category.url},{self.in_stock}"
 
 
 class Category:
@@ -64,6 +65,15 @@ class Category:
             # We might not find a price or condition.
             price = None
             condition = None
+
+            # Check if the card is in stock.
+            in_stock = True
+            out_of_stock_text = div.find(
+                class_='font-weight-bold font-smaller text-muted')
+            if out_of_stock_text is not None:
+                if out_of_stock_text.text in "Out of Stock":
+                    in_stock = False
+
             # Find the listing by Troll and Toad.
             for listing in div.find_all('div', class_='row position-relative align-center py-2 m-auto'):
                 img = listing.find('img')
@@ -75,8 +85,8 @@ class Category:
                         'div', class_='col-2 text-center p-1').text
                     condition = listing.find('a').text.strip()
                     break
-            card = Card(name=name, price=price, endpoint=endpoint,
-                        number=number, condition=condition, kind=kind, category=self)
+            card = Card(name=name, price=price, endpoint=endpoint, number=number,
+                        condition=condition, kind=kind, category=self, in_stock=in_stock)
             cards.append(card)
 
         return cards
