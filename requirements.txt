@@ -1,0 +1,5 @@
+# BeautifulSoup for web scraping.
+beautifulsoup4
+
+# Google spreadsheets.
+gspread
