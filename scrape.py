@@ -11,24 +11,10 @@ import gspread
 
 BASE_URL = "https://www.trollandtoad.com"
 
-SPREADSHEET_ID = ""
+SPREADSHEET_ID = "1XU6hj5jGNGAZ2o0r6gNBRwzveK9nNZiM1oOjnK4lI54"
 
 # Login to google.
 gc = gspread.service_account(filename='key.json')
-
-# Load input cards.
-OWNED_CARDS = {}
-with open('input.csv') as csvfile:
-    spamreader = csv.reader(csvfile, delimiter=',')
-    for row in spamreader:
-        # Read csv in format:
-        # name,number,kind,location
-        # Convert it to a string:
-        # "name,number,kind"
-        text = f"{row[0]},{row[1]},{row[2]}"
-        # Store it in a dictionary where the text is the key, and the location is the value.
-        location = row[3]
-        OWNED_CARDS[text] = location
 
 
 class Card:
@@ -41,23 +27,13 @@ class Card:
         self.endpoint = endpoint
         self.category = category
 
-        # Check the location of this card.
-        text = f"{self.name},{self.number},{self.kind}"
-        self.location = OWNED_CARDS.get(text)
-        # Use a blank string for the location if missing.
-        if self.location is None:
-            self.location = ""
-
-        # If the card has a location, the card is owned.
-        self.owned = self.location not in ""
-
     @property
     def url(self) -> str:
         return f"{BASE_URL}{self.endpoint}"
 
     @property
     def csv(self) -> str:
-        return f"{self.category.name},{self.name},{self.number},{self.kind},{self.price},{self.condition},{self.url},{self.category.url},{self.owned},{self.location}"
+        return f"{self.category.name},{self.name},{self.number},{self.kind},{self.price},{self.condition},{self.url},{self.category.url}"
 
 
 class Category:
