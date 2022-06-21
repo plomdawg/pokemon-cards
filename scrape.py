@@ -6,7 +6,7 @@ import gspread
 
 BASE_URL = "https://www.trollandtoad.com"
 
-SPREADSHEET_ID = ""
+SPREADSHEET_ID = "1XU6hj5jGNGAZ2o0r6gNBRwzveK9nNZiM1oOjnK4lI54"
 
 # Login to google.
 gc = gspread.service_account(filename='key.json')
@@ -87,7 +87,7 @@ class Category:
         # Go the the next page until the "next page" button is gone (end of pages).
         while page.find(class_="nextPage pageLink d-flex font-weight-bold") is not None:
             page_num += 1
-            endpoint = f"{self.endpoint}?sort-order=A-Z&page-no={page_num}&view=list"
+            endpoint = f"{self.endpoint}?sort-order=A-Z&page-no={page_num}&view=list&items-pp=240"
             page = get_page(endpoint)
             cards.extend(self.get_cards_from_page(page))
 
