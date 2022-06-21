@@ -1,10 +1,5 @@
-from distutils.log import error
-import sys
-from unicodedata import name
 import requests
 from bs4 import BeautifulSoup
-from time import sleep
-import os
 import csv
 import gspread
 
@@ -117,9 +112,10 @@ def get_categories():
     return categories
 
 
+# Load the categories.
 categories = get_categories()
 
-# Print each category.
+# Print each category with a number.
 i = 0
 for category in categories:
     print(f"{i}. {category.name} {category.endpoint}")
