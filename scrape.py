@@ -120,9 +120,7 @@ def get_categories():
     categories = []
     page = get_page("/pokemon/7061")
     table = page.find(class_='row card mt-1')
-    # print(table)
     for link in table.find_all('a'):
-        #print(f"link: {link}")
         category = Category(name=link.text, endpoint=link.get('href'))
         categories.append(category)
     return categories
@@ -132,23 +130,40 @@ def get_categories():
 categories = get_categories()
 
 # Print each category with a number.
-i = 0
-for category in categories:
-    print(f"{i}. {category.name} {category.endpoint}")
-    i += 1
+for index, category in enumerate(categories):
+    print(f"{index}. {category.name} {category.endpoint}")
+
+# Blacklist categories that don't contain cards.
+# From logs:
+#  - Loaded 0 cards from category 9. 'Booster Boxes'
+#  - Loaded 0 cards from category 13. 'Complete Sets'
+#  - Loaded 0 cards from category 14. 'Elite Trainer Boxes'
+#  - Loaded 0 cards from category 15. 'Funko POP! & Other Vinyl Figures'
+#  - Loaded 0 cards from category 18. 'Lots & Bundles'
+#  - Loaded 0 cards from category 88. 'Leonhart Exclusive Deals'
+#  - Loaded 0 cards from category 97. 'Pokemon Go'
+#  - Loaded 0 cards from category 139. 'Lots & Bundles'
+#  - Loaded 0 cards from category 141. 'CCG Select'
+#  - Loaded 0 cards from category 145. 'Sword & Shield: Star Birth [s9] Sealed Product'
+blacklist = [9, 13, 14, 15, 18, 88, 97, 139, 141, 145]
 
 # Write card data to a csv file.
 output_file = "output.csv"
 with open(output_file, "w") as f:
     try:
-        i = 0
-        for category in categories:
-            i += 1
+        for index, category in enumerate(categories):
+            # Ignore blacklisted categories.
+            if index in blacklist:
+                continue
+
+            # Get all the cards from this category.
             cards = category.get_cards()
             for card in cards:
                 f.write(card.csv + '\n')
+
+            # Log how many cards we found in this category.
             print(
-                f"Loaded {len(cards)} cards from category {i}. '{category.name}'")
+                f"Loaded {len(cards)} cards from category {index}. '{category.name}'")
 
     except Exception as e:
         print(e)
@@ -157,7 +172,7 @@ with open(output_file, "w") as f:
 google_sheet = gc.open_by_key(SPREADSHEET_ID)
 sheet_name = "output.csv from script"
 
-# Update the values.
+# Update the values by reading the csv file.
 google_sheet.values_update(
     sheet_name,
     params={'valueInputOption': 'USER_ENTERED'},
