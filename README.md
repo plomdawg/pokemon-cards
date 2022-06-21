@@ -55,11 +55,11 @@ All Singles,Piloswine,032/189,Uncommon Reverse Holo,$0.39,Near-Mint Reverse Foil
 
   ![image](https://user-images.githubusercontent.com/6510862/174883533-a09136ba-6702-4860-9ea0-9720391dd3ba.png)
 
-1. The `sorted cards` sheet will now populate.
+2. The `sorted cards` sheet will now populate.
 
   ![image](https://user-images.githubusercontent.com/6510862/174884615-be7ff366-e9f3-46c3-8dd0-2adb5dcdf467.png)
 
-1. You can now filter each column.
+3. You can now filter each column.
 
   ![image](https://user-images.githubusercontent.com/6510862/174885075-526f03c4-bed7-4340-9eca-001e028e3fc8.png)
 
