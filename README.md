@@ -6,7 +6,7 @@ Scripts to scrape pokemon card price data to be used in a spreadsheet.
 
 1. [Authenticate with Google Sheets](https://docs.gspread.org/en/latest/oauth2.html) to get your `key.json`. Place this in the main folder.
 
-1. Create a [spreadsheet](https://sheets.google.com) and invite the email from `key.json` with edit access. 
+1. Create a copy of [this spreadsheet](https://docs.google.com/spreadsheets/d/1qyP4u944LPuUsc1ZgTTibGZCifSkw76Vf6p7X0m9Hdg/edit?usp=sharing) and invite the email from `key.json` with edit access. 
 
 1. Replace the spreadsheet ID in [scrape.py](scrape.py) with the spreadsheet ID from the URL (the string after `/d/`).
 
@@ -48,4 +48,20 @@ All Singles,Pikachu V,157/172,Full Art Ultra Rare,$15.99,Near-Mint English Pokem
 All Singles,Piloswine,032/189,Uncommon,$0.35,Near-Mint English Pokemon Card,https://www.trollandtoad.com/pokemon/sword-shield-astral-radiance-singles/piloswine-032-189-uncommon/1750869,https://www.trollandtoad.com/pokemon/all-singles/7088
 All Singles,Piloswine,032/189,Uncommon Reverse Holo,$0.39,Near-Mint Reverse Foil Pokemon Card,https://www.trollandtoad.com/pokemon/sword-shield-astral-radiance-reverse-holo-singles/piloswine-032-189-uncommon-reverse-holo/1750997,https://www.trollandtoad.com/pokemon/all-singles/7088
 ```
+
+## Spreadsheet Setup
+
+1. Fill in your cards in the first sheet. They will light up green if found in the list of cards.
+
+  ![image](https://user-images.githubusercontent.com/6510862/174883533-a09136ba-6702-4860-9ea0-9720391dd3ba.png)
+
+2. The `sorted cards` sheet will now populate.
+
+  ![image](https://user-images.githubusercontent.com/6510862/174884615-be7ff366-e9f3-46c3-8dd0-2adb5dcdf467.png)
+
+3. You can set filters for each column.
+
+  ![image](https://user-images.githubusercontent.com/6510862/174885075-526f03c4-bed7-4340-9eca-001e028e3fc8.png)
+
+  ![image](https://user-images.githubusercontent.com/6510862/174885293-1c0665db-a1f7-436e-b35a-0dcb6e462adb.png)
 
