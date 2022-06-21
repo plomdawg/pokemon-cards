@@ -12,6 +12,10 @@ SPREADSHEET_ID = "1XU6hj5jGNGAZ2o0r6gNBRwzveK9nNZiM1oOjnK4lI54"
 gc = gspread.service_account(filename='key.json')
 
 
+def clean_text(text) -> str:
+    return text.strip().replace("  ", " ").replace(",", " ")
+
+
 class Card:
     def __init__(self, name, number, price, condition, kind, endpoint, category) -> None:
         self.name = name
@@ -51,9 +55,10 @@ class Category:
             # Ignore cards that don't match the format:
             #     name - number - kind
             try:
-                name = tokens[0].strip()
-                number = tokens[1].strip()
-                kind = tokens[2].strip()
+                # Remove extra spacing and double spacing.
+                name = clean_text(tokens[0])
+                number = clean_text(tokens[1])
+                kind = clean_text(tokens[2])
             except IndexError:
                 continue
             # We might not find a price or condition.
