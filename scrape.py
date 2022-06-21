@@ -6,7 +6,7 @@ import gspread
 
 BASE_URL = "https://www.trollandtoad.com"
 
-SPREADSHEET_ID = "1XU6hj5jGNGAZ2o0r6gNBRwzveK9nNZiM1oOjnK4lI54"
+SPREADSHEET_ID = ""
 
 # Login to google.
 gc = gspread.service_account(filename='key.json')
