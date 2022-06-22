@@ -38,7 +38,7 @@ class Card:
 
 class Category:
     def __init__(self, name, endpoint) -> None:
-        self.name = name.strip()
+        self.name = name
         self.endpoint = endpoint
         self.cards = []
 
@@ -77,6 +77,7 @@ class Category:
                 else:
                     # Found the listing.
                     in_stock = True
+                    # Remove commas from dollar amount.
                     price = listing.find(
                         'div', class_='col-2 text-center p-1').text.replace(",", "")
                     condition = listing.find('a').text.strip()
@@ -126,7 +127,8 @@ def get_categories():
     page = get_page("/pokemon/7061")
     table = page.find(class_='row card mt-1')
     for link in table.find_all('a'):
-        category = Category(name=link.text, endpoint=link.get('href'))
+        name = clean_text(link.text)
+        category = Category(name=name, endpoint=link.get('href'))
         categories.append(category)
     return categories
 
@@ -140,17 +142,18 @@ for index, category in enumerate(categories):
 
 # Blacklist categories that don't contain cards.
 # From logs:
-#  - Loaded 0 cards from category 9. 'Booster Boxes'
-#  - Loaded 0 cards from category 13. 'Complete Sets'
-#  - Loaded 0 cards from category 14. 'Elite Trainer Boxes'
-#  - Loaded 0 cards from category 15. 'Funko POP! & Other Vinyl Figures'
-#  - Loaded 0 cards from category 18. 'Lots & Bundles'
-#  - Loaded 0 cards from category 88. 'Leonhart Exclusive Deals'
-#  - Loaded 0 cards from category 97. 'Pokemon Go'
-#  - Loaded 0 cards from category 139. 'Lots & Bundles'
-#  - Loaded 0 cards from category 141. 'CCG Select'
-#  - Loaded 0 cards from category 145. 'Sword & Shield: Star Birth [s9] Sealed Product'
-blacklist = [9, 13, 14, 15, 18, 88, 97, 139, 141, 145]
+#  - Loaded 67 cards from category 3. 'Official  Plushes, Toys, & Apparel' (not cards)
+#  - Loaded 0 cards from category 8. 'Booster Boxes'
+#  - Loaded 0 cards from category 12. 'Complete Sets'
+#  - Loaded 0 cards from category 13. 'Elite Trainer Boxes'
+#  - Loaded 0 cards from category 14. 'Funko POP! & Other Vinyl Figures'
+#  - Loaded 0 cards from category 17. 'Lots & Bundles'
+#  - Loaded 0 cards from category 87. 'Leonhart Exclusive Deals'
+#  - Loaded 0 cards from category 96. 'Pokemon Go'
+#  - Loaded 0 cards from category 138. 'Lots & Bundles'
+#  - Loaded 0 cards from category 140. 'CCG Select'
+#  - Loaded 0 cards from category 144. 'Sword & Shield: Star Birth [s9] Sealed Product'
+blacklist = [3, 8, 12, 13, 14, 17, 87, 96, 138, 140, 144]
 
 # Write card data to a csv file.
 output_file = "output.csv"
@@ -158,7 +161,7 @@ with open(output_file, "w") as f:
     try:
         for index, category in enumerate(categories):
             # Ignore blacklisted categories.
-            if (index + 1) in blacklist:
+            if index in blacklist:
                 continue
 
             # Get all the cards from this category.
