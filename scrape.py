@@ -78,7 +78,7 @@ class Category:
                     # Found the listing.
                     in_stock = True
                     price = listing.find(
-                        'div', class_='col-2 text-center p-1').text
+                        'div', class_='col-2 text-center p-1').text.replace(",", "")
                     condition = listing.find('a').text.strip()
                     break
 
