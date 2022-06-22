@@ -52,7 +52,7 @@ class Category:
         for div in page.find_all(class_='product-col col-12 p-0 my-1 mx-sm-1 mw-100'):
             text = div.find('a', class_='card-text').text
             endpoint = div.find('a').get('href')
-            tokens = text.split('-')
+            tokens = text.split(' - ')
 
             # Ignore cards that don't match the format:
             #     name - number - kind
