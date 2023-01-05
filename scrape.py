@@ -125,13 +125,18 @@ class Category:
                     print("No buy box found.")
                 else:
                     price_box_div = buy_box_div.find(class_='d-flex flex-column text-center')
-                    if price_box_div:
+                    if price_box_div is None:
+                        print("No price box found.")
+                    else:
                         price = price_box_div.find(class_='font-weight-bold').text.strip()
-                        condition = price_box_div.find(class_='mx-1 flex-grow-1').find('div').text.strip()
-                        price_source = "TNT"
-                        
+                        price_source = price_box_div.find(class_='flex-grow-1').text.strip()
+                        condition_div = buy_box_div.find(class_='mx-1 flex-grow-1')
+                        if condition_div:
+                            condition = condition_div.find('div').text.strip()
+
                 # If that fails, try to find the first vendor price.
                 if price is None and listings:
+                    print("Falling back to vendor price.")
                     listing = listings[0]
                     # Remove commas from dollar amount.
                     price = listing.find(
