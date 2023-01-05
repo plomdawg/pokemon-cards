@@ -133,56 +133,68 @@ def get_categories():
     return categories
 
 
-# Load the categories.
-categories = get_categories()
+def update_csv(csv_file):
+    # Load the categories.
+    categories = get_categories()
 
-# Print each category with a number.
-for index, category in enumerate(categories):
-    print(f"{index}. {category.name} {category.endpoint}")
+    # Print each category with a number.
+    for index, category in enumerate(categories):
+        print(f"{index}. {category.name} {category.endpoint}")
 
-# Blacklist categories that don't contain cards.
-# From logs:
-#  - Loaded 67 cards from category 3. 'Official  Plushes, Toys, & Apparel' (not cards)
-#  - Loaded 0 cards from category 8. 'Booster Boxes'
-#  - Loaded 0 cards from category 12. 'Complete Sets'
-#  - Loaded 0 cards from category 13. 'Elite Trainer Boxes'
-#  - Loaded 0 cards from category 14. 'Funko POP! & Other Vinyl Figures'
-#  - Loaded 0 cards from category 17. 'Lots & Bundles'
-#  - Loaded 0 cards from category 87. 'Leonhart Exclusive Deals'
-#  - Loaded 0 cards from category 96. 'Pokemon Go'
-#  - Loaded 0 cards from category 138. 'Lots & Bundles'
-#  - Loaded 0 cards from category 140. 'CCG Select'
-#  - Loaded 0 cards from category 144. 'Sword & Shield: Star Birth [s9] Sealed Product'
-blacklist = [3, 8, 12, 13, 14, 17, 87, 96, 138, 140, 144]
+    # Blacklist categories that don't contain cards.
+    # From logs:
+    #  - Loaded 67 cards from category 3. 'Official  Plushes, Toys, & Apparel' (not cards)
+    #  - Loaded 0 cards from category 8. 'Booster Boxes'
+    #  - Loaded 0 cards from category 12. 'Complete Sets'
+    #  - Loaded 0 cards from category 13. 'Elite Trainer Boxes'
+    #  - Loaded 0 cards from category 14. 'Funko POP! & Other Vinyl Figures'
+    #  - Loaded 0 cards from category 17. 'Lots & Bundles'
+    #  - Loaded 0 cards from category 87. 'Leonhart Exclusive Deals'
+    #  - Loaded 0 cards from category 96. 'Pokemon Go'
+    #  - Loaded 0 cards from category 138. 'Lots & Bundles'
+    #  - Loaded 0 cards from category 140. 'CCG Select'
+    #  - Loaded 0 cards from category 144. 'Sword & Shield: Star Birth [s9] Sealed Product'
+    blacklist = [3, 8, 12, 13, 14, 17, 87, 96, 138, 140, 144]
 
-# Write card data to a csv file.
-output_file = "output.csv"
-with open(output_file, "w") as f:
-    try:
-        for index, category in enumerate(categories):
-            # Ignore blacklisted categories.
-            if index in blacklist:
-                continue
+    # Write card data to a csv file.
+    with open(csv_file, "w") as f:
+        try:
+            for index, category in enumerate(categories):
+                # Ignore blacklisted categories.
+                if index in blacklist:
+                    continue
 
-            # Get all the cards from this category.
-            cards = category.get_cards()
-            for card in cards:
-                f.write(card.csv + '\n')
+                # Get all the cards from this category.
+                cards = category.get_cards()
+                for card in cards:
+                    f.write(card.csv + '\n')
 
-            # Log how many cards we found in this category.
-            print(
-                f"Loaded {len(cards)} cards from category {index}. '{category.name}'")
+                # Log how many cards we found in this category.
+                print(
+                    f"Loaded {len(cards)} cards from category {index}. '{category.name}'")
 
-    except Exception as e:
-        print(e)
+        except Exception as e:
+            print(e)
 
-# Open the google sheet.
-google_sheet = gc.open_by_key(SPREADSHEET_ID)
-sheet_name = "output.csv from script"
 
-# Update the values by reading the csv file.
-google_sheet.values_update(
-    sheet_name,
-    params={'valueInputOption': 'USER_ENTERED'},
-    body={'values': list(csv.reader(open(output_file)))}
-)
+def update_google_sheet(csv_file):
+    # Open the google sheet.
+    google_sheet = gc.open_by_key(SPREADSHEET_ID)
+    sheet_name = "output.csv from script"
+
+    # Update the values by reading the csv file.
+    google_sheet.values_update(
+        sheet_name,
+        params={'valueInputOption': 'USER_ENTERED'},
+        body={'values': list(csv.reader(open(csv_file)))}
+    )
+
+
+def main():
+    csv_file = "output.csv"
+    update_csv(csv_file)
+    update_google_sheet(csv_file)
+
+
+if __name__ == "__main__":
+    main()
