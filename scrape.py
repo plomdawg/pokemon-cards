@@ -15,11 +15,13 @@ gc = gspread.service_account(filename='key.json')
 def clean_text(text) -> str:
     return text.strip().replace("  ", " ").replace(",", " ")
 
+
 def get_page(endpoint):
     url = f"{BASE_URL}{endpoint}"
     print(f"Loading data from {url}")
     response = requests.get(url)
     return BeautifulSoup(response.text, 'html.parser')
+
 
 def get_categories():
     categories = []
@@ -30,6 +32,7 @@ def get_categories():
         category = Category(name=name, endpoint=link.get('href'))
         categories.append(category)
     return categories
+
 
 class Card:
     def __init__(self, name, number, price, price_source, condition, kind, endpoint, category, in_stock) -> None:
@@ -88,9 +91,10 @@ class Category:
             price_source = None
             condition = None
             in_stock = False
-            
+
             # Find all listings for this card.
-            listings = div.find_all('div', class_='row position-relative align-center py-2 m-auto')
+            listings = div.find_all(
+                'div', class_='row position-relative align-center py-2 m-auto')
 
             # Find the listing by Troll and Toad.
             for listing in listings:
@@ -113,25 +117,30 @@ class Category:
             if out_of_stock_text is not None:
                 if out_of_stock_text.text in "Out of Stock":
                     in_stock = False
-                    
+
             # If we don't have a price, open the card page and get the price.
             if price is None:
-                print(f"No price for card {name} - {number}. Opening card page to get price: {endpoint}")
+                print(
+                    f"No price for card {name} - {number}. Opening card page to get price: {endpoint}")
                 card_page = get_page(endpoint)
-                
+
                 # Try to load the TNT price from the buybox on the right of the page.
                 buy_box_div = card_page.find(class_='buyBox')
                 card_body_div = buy_box_div.find(class_='card-body py-2')
                 if card_body_div is None:
                     print("No buy box found.")
                 else:
-                    price_box_div = card_body_div.find(class_='d-flex flex-column text-center')
+                    price_box_div = card_body_div.find(
+                        class_='d-flex flex-column text-center')
                     if price_box_div is None:
                         print("No price box found.")
                     else:
-                        price = price_box_div.find(class_='font-weight-bold').text.strip()
-                        price_source = price_box_div.find(class_='flex-grow-1').text.strip()
-                        condition_div = card_body_div.find(class_='mx-1 flex-grow-1')
+                        price = price_box_div.find(
+                            class_='font-weight-bold').text.strip()
+                        price_source = price_box_div.find(
+                            class_='flex-grow-1').text.strip()
+                        condition_div = card_body_div.find(
+                            class_='mx-1 flex-grow-1')
                         if condition_div:
                             condition = condition_div.find('div').text.strip()
 
@@ -143,11 +152,11 @@ class Category:
                     price = listing.find(
                         'div', class_='col-2 text-center p-1').text.replace(",", "")
                     condition = listing.find('a').text.strip()
-                    
+
                     # Extract the vendor name from the image.
                     img = listing.find('img')
                     price_source = img.get('title')
-                    
+
                 # If we are still without a price, check the buybox again for a price.
                 if price is None and buy_box_div:
                     print("Falling back to buy box price.")
@@ -194,31 +203,14 @@ def update_csv(csv_file):
     for index, category in enumerate(categories):
         print(f"{index}. {category.name} {category.endpoint}")
 
-    # Blacklist categories that don't contain cards.
-    # From logs:
-    #  - Loaded 67 cards from category 3. 'Official  Plushes, Toys, & Apparel' (not cards)
-    #  - Loaded 0 cards from category 8. 'Booster Boxes'
-    #  - Loaded 0 cards from category 12. 'Complete Sets'
-    #  - Loaded 0 cards from category 13. 'Elite Trainer Boxes'
-    #  - Loaded 0 cards from category 14. 'Funko POP! & Other Vinyl Figures'
-    #  - Loaded 0 cards from category 17. 'Lots & Bundles'
-    #  - Loaded 0 cards from category 87. 'Leonhart Exclusive Deals'
-    #  - Loaded 0 cards from category 96. 'Pokemon Go'
-    #  - Loaded 0 cards from category 138. 'Lots & Bundles'
-    #  - Loaded 0 cards from category 140. 'CCG Select'
-    #  - Loaded 0 cards from category 144. 'Sword & Shield: Star Birth [s9] Sealed Product'
-    blacklist = [3, 8, 12, 13, 14, 17, 87, 96, 138, 140, 144]
-
     # Write card data to a csv file.
     with open(csv_file, "w") as f:
         try:
             for index, category in enumerate(categories):
-                # Ignore blacklisted categories.
-                if index in blacklist:
-                    continue
-
                 # Get all the cards from this category.
                 cards = category.get_cards()
+
+                # Write the cards to the csv file.
                 for card in cards:
                     f.write(card.csv + '\n')
 
