@@ -120,17 +120,18 @@ class Category:
                 card_page = get_page(endpoint)
                 
                 # Try to load the TNT price from the buybox on the right of the page.
-                buy_box_div = card_page.find(class_='card-body py-2')
-                if buy_box_div is None:
+                buy_box_div = card_page.find(class_='buyBox')
+                card_body_div = buy_box_div.find(class_='card-body py-2')
+                if card_body_div is None:
                     print("No buy box found.")
                 else:
-                    price_box_div = buy_box_div.find(class_='d-flex flex-column text-center')
+                    price_box_div = card_body_div.find(class_='d-flex flex-column text-center')
                     if price_box_div is None:
                         print("No price box found.")
                     else:
                         price = price_box_div.find(class_='font-weight-bold').text.strip()
                         price_source = price_box_div.find(class_='flex-grow-1').text.strip()
-                        condition_div = buy_box_div.find(class_='mx-1 flex-grow-1')
+                        condition_div = card_body_div.find(class_='mx-1 flex-grow-1')
                         if condition_div:
                             condition = condition_div.find('div').text.strip()
 
@@ -146,6 +147,15 @@ class Category:
                     # Extract the vendor name from the image.
                     img = listing.find('img')
                     price_source = img.get('title')
+                    
+                # If we are still without a price, check the buybox again for a price.
+                if price is None and buy_box_div:
+                    print("Falling back to buy box price.")
+                    card_header_div = buy_box_div.find(class_='card-header')
+                    price_div = card_header_div.find('span')
+                    if price_div:
+                        price = price_div.text.strip()
+                        price_source = "TNT Buy Box"
 
             if price is None:
                 price_source = None
