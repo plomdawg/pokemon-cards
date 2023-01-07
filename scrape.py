@@ -195,32 +195,25 @@ class Category:
         return cards
 
 
-def update_csv(csv_file):
-    # Load the categories.
-    categories = get_categories()
-
-    # Print each category with a number.
-    for index, category in enumerate(categories):
-        print(f"{index}. {category.name} {category.endpoint}")
-
+def update_csv(csv_file, cards):
+    print(f"Writing {len(cards)} cards to {csv_file}.")
     # Write card data to a csv file.
     with open(csv_file, "w") as f:
-        try:
-            for index, category in enumerate(categories):
-                # Get all the cards from this category.
-                cards = category.get_cards()
+        # Write the cards to the csv file.
+        for card in cards:
+            f.write(card.csv + '\n')
 
-                # Write the cards to the csv file.
-                for card in cards:
-                    f.write(card.csv + '\n')
-
-                # Log how many cards we found in this category.
-                print(
-                    f"Loaded {len(cards)} cards from category {index}. '{category.name}'")
-
-        except Exception as e:
-            print(e)
-
+def get_cards(categories):
+    cards = []
+    for index, category in enumerate(categories):
+        # Print each category with a number.
+        print(f"{index}. {category.name} {category.endpoint}")
+        # Get all the cards from this category.
+        cards.extend(category.get_cards())
+        # Log how many cards we found in this category.
+        print(
+            f"Loaded {len(cards)} cards from category {index}. '{category.name}'")
+    return cards
 
 def update_google_sheet(csv_file):
     # Open the google sheet.
@@ -234,10 +227,11 @@ def update_google_sheet(csv_file):
         body={'values': list(csv.reader(open(csv_file)))}
     )
 
-
 def main():
     csv_file = "output.csv"
-    update_csv(csv_file)
+    categories = get_categories()
+    cards = get_cards(categories)
+    update_csv(csv_file, cards)
     update_google_sheet(csv_file)
 
 
